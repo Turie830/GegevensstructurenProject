@@ -175,3 +175,39 @@ De huidige oplossing en de beste oplossing zijn verschillend. De huidige oplossi
 Bewaar daarnaast de beste oplossing die tijdens het zoeken gevonden is. Die is het uiteindelijke resultaat.
 
 
+```mermaid
+flowchart TD
+    A([Start SA]) --> B["Ontvang startoplossing en parameters:<br/>begintemperatuur T, afkoelfactor α en stopcriterium"]
+    B --> C["Bereken het aantal kruisingen<br/>Bewaar de startoplossing als huidige en beste oplossing"]
+    C --> D{"Stopcriterium bereikt?"}
+
+    D -- Ja --> E([Geef de beste oplossing terug])
+    D -- Nee --> F["Kies willekeurig een laag<br/>met minstens twee knopen"]
+    F --> G["Kies twee verschillende knopen<br/>en verwissel ze om een kandidaat te maken"]
+    G --> H["Bereken het kostenverschil:<br/>Δ = kruisingen kandidaat − kruisingen huidige oplossing"]
+    H --> I{"Δ ≤ 0?"}
+
+    I -- Ja --> J["Accepteer de kandidaat<br/>als huidige oplossing"]
+    I -- Nee --> K["Trek een willekeurig getal r tussen 0 en 1"]
+    K --> L{"r < exp(−Δ / T)?"}
+
+    L -- Ja --> J
+    L -- Nee --> M["Behoud de huidige oplossing"]
+
+    J --> N{"Huidige oplossing beter<br/>dan de beste oplossing?"}
+    N -- Ja --> O["Bewaar een kopie van de huidige oplossing<br/>als beste oplossing"]
+    N -- Nee --> P["Verlaag de temperatuur:<br/>T = α · T, met 0 < α < 1"]
+    O --> P
+    M --> P
+    P --> D
+
+    classDef endpoint fill:#19344d,color:#fff,stroke:#19344d
+    classDef process fill:#e9f2ff,stroke:#699bea,color:#19344d
+    classDef decision fill:#fff4d8,stroke:#e5ad38,color:#785000
+    classDef result fill:#e2f4eb,stroke:#65b98e,color:#206543
+
+    class A,E endpoint
+    class B,C,F,G,H,K,M,P process
+    class D,I,L,N decision
+    class J,O result
+```
