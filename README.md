@@ -211,3 +211,92 @@ flowchart TD
     class D,I,L,N decision
     class J,O result
 ```
+
+
+
+
+# UML diagram:
+
+```mermaid
+classDiagram
+    class BipartiteGraphInterface~V~ {
+        <<interface>>
+        +getVertices() Collection~V~
+        +getNumberOfEdges() int
+        +getNumberOfVertices() int
+        +areNeighbors(V u, V v) boolean
+        +getDegree(V u) int
+        +getNeighborsOf(V u) Collection~V~
+        +runFirstHeuristic()
+        +runSecondHeuristic()
+        +runMetaheuristicTest(int maxIterations)
+    }
+
+    class BipartiteGraph~V~ {
+        -Map adjacency
+        -List~V~ leftVertices
+        -List~V~ rightVertices
+        +getVertices() Collection~V~
+        +getNumberOfEdges() int
+        +getNumberOfVertices() int
+        +areNeighbors(V u, V v) boolean
+        +getDegree(V u) int
+        +getNeighborsOf(V u) Collection~V~
+        +runFirstHeuristic()
+        +runSecondHeuristic()
+        +runMetaheuristicTest(int maxIterations)
+    }
+
+    class Ordering~V~ {
+        -List~V~ leftOrder
+        -List~V~ rightOrder
+        -Map leftPositions
+        -Map rightPositions
+        +copy() Ordering~V~
+        +swapLeft(int i, int j) void
+        +swapRight(int i, int j) void
+        +updatePositions() void
+        +toVertexList() List~V~
+    }
+
+    class MedianHeuristic~V~ {
+        +solve(BipartiteGraph graph, Ordering initial) Ordering~V~
+        -orderLayer(BipartiteGraph graph, Ordering order, boolean left) void
+        -quickselect(int[] values, int k) int
+        -stableMergeSort(List vertices, Map keys) void
+    }
+
+    class SplittingHeuristic~V~ {
+        +solve(BipartiteGraph graph, Ordering initial) Ordering~V~
+        -split(BipartiteGraph graph, List group, Map oppositePositions) List~V~
+    }
+
+    class SimulatedAnnealing~V~ {
+        -double initialTemperature
+        -double coolingFactor
+        -Random random
+        +solve(BipartiteGraph graph, Ordering initial, int maxIterations) Ordering~V~
+        -randomNeighbor(Ordering current) Ordering~V~
+        -accept(long delta, double temperature) boolean
+    }
+
+    class CrossingCounter~V~ {
+        +count(BipartiteGraph graph, Ordering order) long
+        +countPair(BipartiteGraph graph, V before, V after, Map oppositePositions) long
+    }
+
+    BipartiteGraphInterface <|.. BipartiteGraph
+
+    BipartiteGraph ..> MedianHeuristic : runFirstHeuristic
+    BipartiteGraph ..> SplittingHeuristic : runSecondHeuristic
+    BipartiteGraph ..> SimulatedAnnealing : runMetaheuristicTest
+
+    Ordering ..> BipartiteGraph : ordening van knopen
+    MedianHeuristic ..> Ordering
+    SplittingHeuristic ..> Ordering
+    SimulatedAnnealing ..> Ordering
+
+    BipartiteGraph ..> CrossingCounter
+    SplittingHeuristic ..> CrossingCounter
+    SimulatedAnnealing ..> CrossingCounter
+```
