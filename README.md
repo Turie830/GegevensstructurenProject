@@ -233,7 +233,7 @@ classDiagram
     }
 
     class BipartiteGraph~V~ {
-        -Map adjacency
+        -Map<V, Set<V>> adjacency
         -List~V~ leftVertices
         -List~V~ rightVertices
         +getVertices() Collection~V~
@@ -300,3 +300,72 @@ classDiagram
     SplittingHeuristic ..> CrossingCounter
     SimulatedAnnealing ..> CrossingCounter
 ```
+
+## Gekozen datastructuren
+
+### `Map<V, Set<V>> adjacency` - de verbindingen van de graaf
+
+Deze map stelt een **adjacentielijst** voor: bij elke knoop wordt bijgehouden welke buren hij heeft.
+
+Bijvoorbeeld:
+
+- `A → {1, 3}`
+- `B → {2, 3}`
+- `C → {1}`
+
+### `List<V> leftVertices` en `rightVertices` - de twee partities
+
+De twee lijsten bewaren expliciet welke knopen links en rechts staan:
+
+- `leftVertices  = [A, B, C]`
+- `rightVertices = [1, 2, 3]`
+
+### `Ordering` - lijsten en positiemaps
+
+```java
+List<V> leftOrder;
+List<V> rightOrder;
+
+Map<V, Integer> leftPositions;
+Map<V, Integer> rightPositions;
+```
+
+De **lijsten** beantwoorden: “Welke knoop staat op positie i?”  
+De **maps** beantwoorden: “Op welke positie staat knoop v?”
+
+Bijvoorbeeld:
+
+- `leftOrder     = [C, A, B]`
+- `leftPositions = {C → 0, A → 1, B → 2}`
+
+Zonder positiemap moet je een lijst doorzoeken om de positie van een knoop te vinden: **O(n)**  
+Het nadeel is dat de lijsten en maps **consistent moeten blijven**.
+
+### `MedianHeuristic` - arrays en sorteersleutels
+
+`quickselect(int[] values, int k)` gebruikt een **array van gehele getallen** voor de posities van de buren
+
+Bijvoorbeeld:
+
+- `Buurposities van A = [1, 4, 6]`
+- `Mediaan           = 4`
+
+> Bij een lijst met even aantal getallen zal je 2 keer quicksort moeten uitvoeren en het gemiddelde van de 2 berekenen
+
+De **`Map keys`** koppelt elke knoop aan zijn berekende sorteersleutel. `stableMergeSort` sorteert de knopen op die sleutel in **O(n log n)**. We gebruiken **stable merge sort** zodat knopen met dezelfde mediaan hun oorspronkelijke onderlinge volgorde behouden.
+
+### `SplittingHeuristic` - lijsten voor deelgroepen
+
+`split(...)` werkt met een **`List group`**. Een lijst is geschikt om een groep knopen op te splitsen en de resultaten vervolgens in een bepaalde volgorde samen te voegen.
+
+De **`Map oppositePositions`** geeft snel de posities van knopen in de tegenoverliggende laag. Daardoor hoeft het algoritme die posities niet telkens via een zoekactie in een lijst te bepalen.
+
+### `SimulatedAnnealing` - kandidaatordeningen
+
+werkt met **Ordering-objecten**. De klasse `Ordering` bewaart de twee lijsten en de positie van elke knoop. Door bijvoorbeeld twee knopen te verwisselen, ontstaat een nieuwe kandidaatordening.
+
+### `CrossingCounter` - `long` voor aantallen
+
+Om de kruisingen te tellen gebruikt `CrossingCounter` de adjacentiestructuur om verbindingen te doorlopen en de positiemaps om te bepalen hoe hun eindpunten geordend zijn.
+
+Het resultaat is een **`long`**, omdat het aantal kruisingen sterk kan groeien: in het algemeen zijn er maximaal `|E|(|E| − 1) / 2` paren verbindingen. Een `int` kan daardoor bij grote grafen te klein worden.
