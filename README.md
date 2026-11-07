@@ -31,13 +31,12 @@ Na het ordenen van links kun je links vasthouden en rechts ordenen.
 
 ```mermaid
 flowchart TD
-    A([Start MED1]) --> B["Ontvang knoopvolgorde, burenlijsten<br/>en posities van de andere laag"]
-    B --> C["Bewaar de oude positie van elke knoop"]
-    C --> D["Neem de volgende knoop u"]
+    A([Start MED1]) --> B["Ontvang Ordering en de burenlijsten"]
+    B --> D["Neem de volgende knoop u"]
     D --> E["Verzamel de huidige posities<br/>van alle buren van u"]
     E --> F{"Heeft u buren?"}
 
-    F -- Nee --> G["Gebruik de oude positie<br/>als sorteersleutel"]
+    F -- Nee --> G["Lees de positie van u uit de positiemap<br/>van de te sorteren laag en gebruik die als sorteersleutel"]
     F -- Ja --> H{"Aantal buren even?"}
 
     H -- Nee --> I["Vind de middelste waarde<br/>met Quickselect"]
@@ -49,8 +48,8 @@ flowchart TD
 
     K --> L{"Nog knopen te verwerken?"}
     L -- Ja --> D
-    L -- Nee --> M["Sorteer de knopen op hun medianen<br/>met mergesort"]
-    M --> N["Werk het positie-array bij"]
+    L -- Nee --> M["Sorteer de knopen op hun sorteersleutels<br/>met stabiele mergesort"]
+    M --> N["Werk de positiemap van de gesorteerde laag bij"]
     N --> O([Geef nieuwe volgorde en posities terug])
 
     classDef endpoint fill:#19344d,color:#fff,stroke:#19344d
@@ -59,7 +58,7 @@ flowchart TD
     classDef result fill:#e2f4eb,stroke:#65b98e,color:#206543
 
     class A,O endpoint
-    class B,C,D,E,G,I,J,K process
+    class B,D,E,G,I,J,K process
     class F,H,L decision
     class M,N result
 ```
