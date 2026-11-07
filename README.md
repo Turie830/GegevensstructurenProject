@@ -49,7 +49,7 @@ flowchart TD
 
     K --> L{"Nog knopen te verwerken?"}
     L -- Ja --> D
-    L -- Nee --> M["Sorteer de knopen op hun medianen<br/>met stabiele mergesort"]
+    L -- Nee --> M["Sorteer de knopen op hun medianen<br/>met mergesort"]
     M --> N["Werk het positie-array bij"]
     N --> O([Geef nieuwe volgorde en posities terug])
 
@@ -233,7 +233,7 @@ classDiagram
     }
 
     class BipartiteGraph~V~ {
-        -Map<V, Set<V>> adjacency
+        -Map~V,SetV~ adjacency
         -List~V~ leftVertices
         -List~V~ rightVertices
         +getVertices() Collection~V~
@@ -263,7 +263,7 @@ classDiagram
         +solve(BipartiteGraph graph, Ordering initial) Ordering~V~
         -orderLayer(BipartiteGraph graph, Ordering order, boolean left) void
         -quickselect(int[] values, int k) int
-        -stableMergeSort(List vertices, Map keys) void
+        -MergeSort(List vertices, Map keys) void
     }
 
     class SplittingHeuristic~V~ {
@@ -352,7 +352,7 @@ Bijvoorbeeld:
 
 > Bij een lijst met even aantal getallen zal je 2 keer quicksort moeten uitvoeren en het gemiddelde van de 2 berekenen
 
-De **`Map keys`** koppelt elke knoop aan zijn berekende sorteersleutel. `stableMergeSort` sorteert de knopen op die sleutel in **O(n log n)**. We gebruiken **stable merge sort** zodat knopen met dezelfde mediaan hun oorspronkelijke onderlinge volgorde behouden.
+De **`Map keys`** koppelt elke knoop aan zijn berekende sorteersleutel. `MergeSort` sorteert de knopen op die sleutel in **O(n log n)**. We gebruiken **merge sort** zodat knopen met dezelfde mediaan hun oorspronkelijke onderlinge volgorde behouden.
 
 ### `SplittingHeuristic` - lijsten voor deelgroepen
 
